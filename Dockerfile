@@ -42,12 +42,14 @@ RUN ldconfig
 
 RUN tomcat9-instance-create /tomcat
 RUN wget https://downloads.apache.org/guacamole/1.3.0/binary/guacamole-1.3.0.war
-RUN mv guacamole-1.3.0.war /tomcat/webapps/guacamole.war
-
-COPY startup.sh startup.sh
-RUN chmod +x startup.sh
+RUN mv guacamole-1.3.0.war /tomcat/webapps/ROOT.war
 
 RUN mkdir /etc/guacamole
 RUN touch /etc/guacamole/user-mapping.xml
 
-CMD [ "./startup.sh" ]
+WORKDIR /build
+COPY entrypoint.sh entrypoint.sh
+RUN chmod +x entrypoint.sh
+
+ENTRYPOINT ["/build/entrypoint.sh"]
+CMD ["/usr/share/tomcat9/bin/catalina.sh", "run"]
